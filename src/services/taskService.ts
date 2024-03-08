@@ -44,7 +44,7 @@ class TaskService {
         return false;
     }
 
-    public getAllTasks(page: number = 1, limit: number = 10, searchQuery?: string, assignedTo?: string, category?: string, currentUserId?: string): { rows: Task[], pagination: PaginationSummary } {
+    public getAllTasks(page: number = 1, limit: number = 10, searchQuery?: string, assignedTo?: string, categoryId?: string, currentUserId?: string): { rows: Task[], pagination: PaginationSummary } {
         let filteredTasks = this.tasks;
 
         if (currentUserId) {
@@ -55,8 +55,8 @@ class TaskService {
             filteredTasks = filteredTasks.filter(task => task.assignedTo === assignedTo);
         }
 
-        if (category) {
-            filteredTasks = filteredTasks.filter(task => task.category === category);
+        if (categoryId) {
+            filteredTasks = filteredTasks.filter(task => task.categoryId === categoryId);
         }
 
         if (searchQuery) {

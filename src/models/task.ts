@@ -6,7 +6,7 @@ export interface Task {
   description: string;
   dueDate: Date;
   assignedTo: string;
-  category: string;
+  categoryId: string;
   status: TaskStatus;
   createdAt: Date;
   createdBy: string
