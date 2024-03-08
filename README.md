@@ -107,6 +107,7 @@ Certain routes, such as creating, updating, and deleting categories, tasks, and 
 
 4. **Response Messages**: Currently, response messages are embedded within the route handlers. To improve code maintainability and reusability, these messages can be moved to a separate YAML file or constants file. This allows for easier management of response messages and facilitates localization if needed in the future.
 
+5 **Async/await**: There are no asynchronous operations such as I/O operations, network requests, or database queries that would require the use of async and await. Therefore, not implemented
 
 ## Testing
 

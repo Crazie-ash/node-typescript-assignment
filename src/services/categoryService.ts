@@ -12,9 +12,12 @@ class CategoryService {
     private categories: Category[] = [];
 
     public createCategory(category: Category): Category {
+        const { title, createdBy } = category;
+
         const newCategory: Category = {
-            ...category,
             id: uuidv4(),
+            title, 
+            createdBy,
             createdAt: new Date(),
         };
         this.categories.push(newCategory);
@@ -42,7 +45,7 @@ class CategoryService {
         }
         return false;
     }
-    
+
     public getAllCategories(page: number = 1, limit: number = 10, searchQuery?: string, currentUserId?: string): { rows: Category[], pagination: PaginationSummary } {
         let filteredCategories = this.categories;
 

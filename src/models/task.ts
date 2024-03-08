@@ -1,13 +1,13 @@
 import { TaskStatus } from "../enums/TaskStatus";
 
 export interface Task {
-  id: string;
+  id?: string;
   title: string;
-  description: string;
+  description?: string;
   dueDate: Date;
   assignedTo: string;
   categoryId: string;
-  status: TaskStatus;
-  createdAt: Date;
+  status?: TaskStatus;
+  createdAt?: Date;
   createdBy: string
 }

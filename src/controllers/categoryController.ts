@@ -4,8 +4,9 @@ import { categoryService } from '../services/categoryService';
 
 export const createCategory = (req: Request, res: Response): void => {
     try {
-        const category: Category = req.body;
-        const newCategory = categoryService.createCategory(category);
+        const currentUser = req.user;
+        const { title } = req.body;
+        const newCategory = categoryService.createCategory({ title, createdBy: currentUser?.id ?? 'unknown' });
         res.status(201).json({ status: true, message: 'Category created successfully', data: newCategory });
     } catch (error: any) {
         res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
@@ -95,9 +96,9 @@ export const getAllCategories = (req: Request, res: Response): void => {
     try {
         const currentUser = req.user;
         const { page = 1, limit = 10, searchQuery } = req.query;
-        
+
         const categories = categoryService.getAllCategories(+page, +limit, searchQuery as string, currentUser?.id);
-        
+
         res.status(200).json({ status: true, message: 'Categories fetched successfully', data: categories });
     } catch (error: any) {
         res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });

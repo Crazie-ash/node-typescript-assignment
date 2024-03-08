@@ -1,6 +1,7 @@
 import { User } from "../models/user";
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
+import { UserRole } from "../enums/UserRole";
 
 interface PaginationSummary {
     totalRows: number;
@@ -13,12 +14,13 @@ class UserService {
     private users: User[] = [];
 
     public createUser(user: User): User {
-
-        const hashedPassword = bcrypt.hashSync(user.password, 10); 
+        const { username, password } = user; 
+        const hashedPassword = bcrypt.hashSync(password, 10); 
 
         const newUser: User = {
-            ...user,
             id: uuidv4(),
+            username,
+            role: UserRole.USER,
             createdAt: new Date(),
             password: hashedPassword
         };

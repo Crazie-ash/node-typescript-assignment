@@ -1,10 +1,9 @@
 import { UserRole } from "../enums/UserRole";
 
 export interface User {
-    id: string;
+    id?: string;
     username: string;
     password: string;
-    role: UserRole;
-    createdAt: Date;
-    createdBy: string
+    role?: UserRole;
+    createdAt?: Date;
 }

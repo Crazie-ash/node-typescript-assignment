@@ -1,6 +1,6 @@
 export interface Category {
-    id: string;
+    id?: string;
     title: string;
-    createdAt: Date;
+    createdAt?: Date;
     createdBy: string
 }

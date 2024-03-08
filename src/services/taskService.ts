@@ -16,12 +16,19 @@ class TaskService {
     private tasks: Task[] = [];
 
     public createTask(task: Task): Task {
+        const { title, assignedTo, categoryId, createdBy, description, dueDate } = task;
         const newTask: Task = {
-            ...task,
             id: uuidv4(),
+            title,
+            assignedTo,
+            categoryId,
+            createdBy,
+            description,
+            dueDate,
             createdAt: new Date(),
             status: TaskStatus.Pending
         };
+
         this.tasks.push(newTask);
         return newTask;
     }
