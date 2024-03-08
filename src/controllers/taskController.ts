@@ -91,11 +91,11 @@ export const getTaskById = (req: Request, res: Response): void => {
 export const getAllTasks = (req: Request, res: Response): void => {
     try {
         const currentUser = req.user;
-        const { page = 1, limit = 10, searchQuery, assignedTo, categoryId } = req.query;
+        const { page = 1, limit = 10, searchQuery, assignedTo, category } = req.query;
         
         const currentUserId = currentUser?.id as string;
         
-        const tasks = taskService.getAllTasks(+page, +limit, searchQuery as string, assignedTo as string, categoryId as string, currentUserId);
+        const tasks = taskService.getAllTasks(+page, +limit, searchQuery as string, assignedTo as string, category as string, currentUserId);
         
         res.status(200).json({ status: true, message: 'Tasks fetched successfully', data: tasks });
     } catch (error: any) {

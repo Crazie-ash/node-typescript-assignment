@@ -10,6 +10,6 @@ const { ADMIN, USER } = UserRole;
 router.put('/:id', verifyToken([ADMIN, USER]), userController.updateUser);
 router.delete('/:id', verifyToken([ADMIN, USER]), userController.deleteUser);
 router.get('/:id', verifyToken([ADMIN, USER]), userController.getUserById);
-router.get('/', verifyToken([ADMIN]), userController.getAllUsers);
+router.get('/', verifyToken([ADMIN, USER]), userController.getAllUsers);
 
 export default router;

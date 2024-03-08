@@ -8,7 +8,7 @@ export const createUser = (req: Request, res: Response): void => {
     try {
         const { password, confirmPassword, ...userData } = req.body;
         
-        if (userService.isEmailExists(userData.email)) {
+        if (userService.isUsernameExists(userData.username)) {
             res.status(400).json({ status: false, message: 'Email already exists', data: {} });
             return;
         }
@@ -27,7 +27,7 @@ export const createUser = (req: Request, res: Response): void => {
         const token = generateToken(createdUser);
         const responseData = {
             id: createdUser.id,
-            email: createdUser.email,
+            username: createdUser.username,
             createdAt: createdUser.createdAt,
             token: token
         };
@@ -39,10 +39,10 @@ export const createUser = (req: Request, res: Response): void => {
 
 export const loginUser = (req: Request, res: Response): void => {
     try {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
         const users = userService.getAllUsers().rows;
 
-        const user = users.find(user => user.email === email);
+        const user = users.find(user => user.username === username);
         if (!user) {
             res.status(401).json({ status: false, message: 'Invalid credentials', data: {} });
             return;
@@ -58,7 +58,7 @@ export const loginUser = (req: Request, res: Response): void => {
 
         const responseData = {
             id: user.id,
-            email: user.email,
+            username: user.username,
             createdAt: user.createdAt,
             token: token
         };

@@ -1,6 +1,10 @@
 import { Task } from "../models/task";
 import { v4 as uuidv4 } from 'uuid';
 import { TaskStatus } from '../enums/TaskStatus';
+import { categoryService } from '../services/categoryService';
+import { User } from "../models/user";
+import { userService } from "./userService";
+
 interface PaginationSummary {
     totalRows: number;
     totalPages: number;
@@ -44,19 +48,26 @@ class TaskService {
         return false;
     }
 
-    public getAllTasks(page: number = 1, limit: number = 10, searchQuery?: string, assignedTo?: string, categoryId?: string, currentUserId?: string): { rows: Task[], pagination: PaginationSummary } {
+    public getAllTasks(page: number = 1, limit: number = 10, searchQuery?: string, assignedTo?: string, category?: string, currentUserId?: string): { rows: Task[], pagination: PaginationSummary } {
         let filteredTasks = this.tasks;
 
         if (currentUserId) {
             filteredTasks = filteredTasks.filter(task => task.createdBy === currentUserId);
         }
-        
+
         if (assignedTo) {
-            filteredTasks = filteredTasks.filter(task => task.assignedTo === assignedTo);
+            const assignedUser: User | undefined = userService.getUserByUsername(assignedTo);
+            if (assignedUser) {
+                filteredTasks = filteredTasks.filter(task => task.assignedTo === assignedUser.id);
+            }
         }
 
-        if (categoryId) {
-            filteredTasks = filteredTasks.filter(task => task.categoryId === categoryId);
+        if (category) {
+            const categoryLowered = category.toLowerCase();
+            filteredTasks = filteredTasks.filter(task => {
+                const taskCategory = categoryService.getCategoryById(task.categoryId);
+                return taskCategory && taskCategory.title.toLowerCase() === categoryLowered;
+            });
         }
 
         if (searchQuery) {

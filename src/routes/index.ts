@@ -7,8 +7,8 @@ import userRoutes from './userRoutes';
 const router = Router();
 
 router.use('/auth', authRoutes);
-router.use('/user', userRoutes);
-router.use('/task', taskRoutes);
-router.use('/category', categoryRoutes);
+router.use('/users', userRoutes);
+router.use('/tasks', taskRoutes);
+router.use('/categories', categoryRoutes);
 
 export default router;

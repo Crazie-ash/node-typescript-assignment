@@ -27,10 +27,15 @@ class UserService {
         return newUser;
     }
 
-    public isEmailExists(email: string): boolean {
-        return this.users.some(user => user.email === email);
+    public isUsernameExists(username: string): boolean {
+        return this.users.some(user => user.username === username);
     }
 
+    public getUserByUsername(username: string): User | undefined {
+        const lowerCaseUsername = username.toLowerCase(); 
+        return this.users.find(user => user.username.toLowerCase() === lowerCaseUsername);
+    }
+    
     public getUserById(id: string): User | undefined {
         return this.users.find(user => user.id === id);
     }
@@ -58,7 +63,7 @@ class UserService {
 
         if (searchQuery.trim() !== '') {
             const searchRegex = new RegExp(searchQuery, 'i');
-            filteredUsers = filteredUsers.filter(user => searchRegex.test(user.email));
+            filteredUsers = filteredUsers.filter(user => searchRegex.test(user.username));
         }
 
         const totalRows = filteredUsers.length;

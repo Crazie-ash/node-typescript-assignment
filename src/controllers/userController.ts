@@ -61,11 +61,6 @@ export const getUserById = (req: Request, res: Response): void => {
         const currentUser = req.user;
         const userId: string = req.params.id;
 
-        if (currentUser?.id !== userId) {
-            res.status(403).json({ status: false, message: 'Forbidden: You are not authorized to delete this user', data: {} });
-            return;
-        }
-
         const user = userService.getUserById(userId);
         if (!user) {
             res.status(404).json({ status: false, message: 'User not found', data: {} });
