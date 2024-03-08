@@ -91,33 +91,21 @@ Certain routes, such as creating, updating, and deleting categories, tasks, and 
 
 1. **Authentication and Authorization**: It is assumed that the backend includes authentication and authorization mechanisms to ensure that only authorized users can access certain endpoints or perform specific actions. This may involve using JSON Web Tokens (JWT) for authentication and role-based access control (RBAC) for authorization.
 
-2. **Database**: While the task management system may eventually integrate with a database for persistent data storage, for the purpose of this README and the sample code provided, an in-memory data storage mechanism is used. This allows for easy manipulation of data without the need for setting up and managing a database.
+2. **User Roles**: The system distinguishes between two user roles: ADMIN and USER. ADMIN users  is assumed to be implemented have elevated privileges and can perform administrative tasks such as creating categories and managing users will be implemented if required, while regular USERs have restricted access and can primarily manage their own tasks.
 
-3. **User Roles**: The system distinguishes between two user roles: ADMIN and USER. ADMIN users  is assumed to be implemented have elevated privileges and can perform administrative tasks such as creating categories and managing users will be implemented if required, while regular USERs have restricted access and can primarily manage their own tasks.
+3. **Validation**: Input validation is assumed to be implemented using a library like Joi to ensure that incoming data meets certain criteria before processing it further. This helps prevent security vulnerabilities and data inconsistencies.
 
-4. **Endpoints**: The API endpoints provided in the README are assumed to be part of a RESTful API design. Each endpoint serves a specific purpose related to task management, including creating, retrieving, updating, and deleting tasks, as well as managing categories and users.
-
-5. **Pagination**: Pagination may be implemented for endpoints that return multiple resources, such as the `/tasks` endpoint. This allows for efficient handling of large datasets by limiting the number of resources returned per request.
-
-6. **Validation**: Input validation is assumed to be implemented using a library like Joi to ensure that incoming data meets certain criteria before processing it further. This helps prevent security vulnerabilities and data inconsistencies.
-
-7. **Error Handling**: The backend is expected to handle errors gracefully and return meaningful error messages to the client in case of invalid requests, server errors, or unauthorized access attempts.
-
-8. **Testing**: Unit tests are assumed to be written for the backend API endpoints to verify their functionality and ensure that changes to the codebase do not introduce regressions. A testing framework like Mocha or Jest may be used for this purpose.
-
-9. **Documentation**: The API is documented using tools like Postman, which provides a comprehensive overview of the available endpoints, their parameters, and expected responses. This documentation helps developers understand how to interact with the API effectively.
-
-10. **Deployment**: The backend application is assumed to be deployed on a server or cloud platform to make it accessible to clients over the internet. Deployment considerations include scalability, security, and performance optimization.
-
-These assumptions provide a basic understanding of the context in which the task management system operates and the expectations regarding its functionality and implementation.
+4. **Error Handling**: The backend is expected to handle errors gracefully and return meaningful error messages to the client in case of invalid requests, server errors, or unauthorized access attempts.
 
 ## Liberty Taken Points
 
-1. **Validation**: Although sample validation logic has been implemented, it hasn't been integrated into the provided routes. It can be integrated upon request or as per project requirements to ensure data integrity and security.
+1. **Data Storage**: The `assignedTo` and `category` fields are stored as IDs rather than actual user or category names. This approach helps prevent data pollution and offers flexibility when joining existing data.
 
-2. **Population**: In the provided models and routes, there's no explicit handling of population of related entities such as users, tasks, and categories. Depending on the project requirements and complexity, population logic can be implemented to fetch related data and populate it within responses for better data representation.
+2. **Validation**: Although sample validation logic has been implemented, it hasn't been integrated into the provided routes. It can be integrated upon request or as per project requirements to ensure data integrity and security.
 
-3. **Response Messages**: Currently, response messages are embedded within the route handlers. To improve code maintainability and reusability, these messages can be moved to a separate YAML file or constants file. This allows for easier management of response messages and facilitates localization if needed in the future.
+3. **Population**: In the provided models and routes, there's no explicit handling of population of related entities such as users, tasks, and categories. Depending on the project requirements and complexity, population logic can be implemented to fetch related data and populate it within responses for better data representation.
+
+4. **Response Messages**: Currently, response messages are embedded within the route handlers. To improve code maintainability and reusability, these messages can be moved to a separate YAML file or constants file. This allows for easier management of response messages and facilitates localization if needed in the future.
 
 
 ## Testing
