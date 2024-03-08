@@ -1,6 +1,13 @@
 import { Task } from "../models/task";
 import { v4 as uuidv4 } from 'uuid';
-
+import { TaskStatus } from '../enums/TaskStatus';
+interface PaginationSummary {
+    totalRows: number;
+    totalPages: number;
+    currentPage: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+}
 class TaskService {
     private tasks: Task[] = [];
 
@@ -8,8 +15,8 @@ class TaskService {
         const newTask: Task = {
             ...task,
             id: uuidv4(),
-            creationDate: new Date(),
-            status: 'Pending'
+            createdAt: new Date(),
+            status: TaskStatus.Pending
         };
         this.tasks.push(newTask);
         return newTask;
@@ -37,9 +44,13 @@ class TaskService {
         return false;
     }
 
-    public getAllTasks(page: number = 1, limit: number = 10, assignedTo?: string, category?: string): Task[] {
+    public getAllTasks(page: number = 1, limit: number = 10, searchQuery?: string, assignedTo?: string, category?: string, currentUserId?: string): { rows: Task[], pagination: PaginationSummary } {
         let filteredTasks = this.tasks;
 
+        if (currentUserId) {
+            filteredTasks = filteredTasks.filter(task => task.createdBy === currentUserId);
+        }
+        
         if (assignedTo) {
             filteredTasks = filteredTasks.filter(task => task.assignedTo === assignedTo);
         }
@@ -48,10 +59,28 @@ class TaskService {
             filteredTasks = filteredTasks.filter(task => task.category === category);
         }
 
+        if (searchQuery) {
+            const searchQueryLowered = searchQuery.toLowerCase();
+            filteredTasks = filteredTasks.filter(task => task.title.toLowerCase().includes(searchQueryLowered));
+        }
+
+        const totalRows = filteredTasks.length;
+        const totalPages = Math.ceil(totalRows / limit);
+        const currentPage = page;
+
+        const paginationSummary: PaginationSummary = {
+            totalRows,
+            totalPages,
+            currentPage,
+            hasNextPage: currentPage < totalPages,
+            hasPrevPage: currentPage > 1
+        };
+
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
+        const paginatedTasks = filteredTasks.slice(startIndex, endIndex);
 
-        return filteredTasks.slice(startIndex, endIndex);
+        return { rows: paginatedTasks, pagination: paginationSummary };
     }
 
 }
