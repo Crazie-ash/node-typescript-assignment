@@ -53,7 +53,9 @@ class TaskService {
         return false;
     }
 
-    public getAllTasks(page: number = 1, limit: number = 10, searchQuery?: string, assignedTo?: string, category?: string, currentUserId?: string): { rows: Task[], pagination: PaginationSummary } {
+    public getAllTasks(request: tasksDto.GetAllTasksRequest, currentUserId?: string): tasksDto.GetAllTasksResponseData {
+        let { page = 1, limit = 10, searchQuery, assignedTo, category } = request;
+
         let filteredTasks = this.tasks;
 
         if (currentUserId) {
@@ -71,7 +73,7 @@ class TaskService {
             const categoryLowered = category.toLowerCase();
             filteredTasks = filteredTasks.filter(task => {
                 const taskCategory = categoryService.getCategoryById(task.categoryId);
-                return taskCategory && taskCategory.title.toLowerCase() === categoryLowered;
+                return taskCategory && taskCategory.title.toLowerCase().includes(categoryLowered);
             });
         }
 
@@ -79,6 +81,12 @@ class TaskService {
             const searchQueryLowered = searchQuery.toLowerCase();
             filteredTasks = filteredTasks.filter(task => task.title.toLowerCase().includes(searchQueryLowered));
         }
+
+        const tasksWithDetails = filteredTasks.map(task => {
+            const assignedToDetail = userService.getUserById(task.assignedTo)!;
+            const categoryDetail = categoryService.getCategoryById(task.categoryId)!;
+            return { ...task, assignedToDetail, categoryDetail };
+        });
 
         const totalRows = filteredTasks.length;
         const totalPages = Math.ceil(totalRows / limit);
@@ -94,7 +102,7 @@ class TaskService {
 
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        const paginatedTasks = filteredTasks.slice(startIndex, endIndex);
+        const paginatedTasks = tasksWithDetails.slice(startIndex, endIndex);
 
         return { rows: paginatedTasks, pagination: paginationSummary };
     }

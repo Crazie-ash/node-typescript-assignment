@@ -194,8 +194,14 @@ export const getAllCategories = (req: Request, res: Response): void => {
         const currentUser = req.user;
         const { page = 1, limit = 10, searchQuery }: categoryDto.GetAllCategoriesRequest = req.query;
 
-        const { rows, pagination }: categoryDto.GetAllCategoriesResponseData = categoryService.getAllCategories(+page, +limit, searchQuery, currentUser?.id);
-
+        const getAllCategoriesRequest: categoryDto.GetAllCategoriesRequest = {
+            page: +page,
+            limit: +limit,
+            searchQuery: searchQuery,
+        };
+        
+        const { rows, pagination }: categoryDto.GetAllCategoriesResponseData = categoryService.getAllCategories(getAllCategoriesRequest, currentUser?.id);
+        
         const commonResponse: CommonResponseData<categoryDto.GetAllCategoriesResponseData> = {
             status: true,
             message: 'Categories fetched successfully',

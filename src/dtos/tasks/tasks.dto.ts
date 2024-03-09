@@ -1,5 +1,7 @@
 import { TaskStatus } from "../../enums/TaskStatus";
+import { Category } from "../../models/category";
 import { Task } from "../../models/task";
+import { User } from "../../models/user";
 import { PaginationSummary } from "../common/pagination";
 
 export interface CreateTaskRequest {
@@ -33,6 +35,11 @@ export interface GetAllTasksRequest {
 }
 
 export interface GetAllTasksResponseData {
-    rows: Task[];
+    rows: TaskWithDetails[];
     pagination: PaginationSummary;
+}
+
+export interface TaskWithDetails extends Task {
+    assignedToDetail: User;
+    categoryDetail: Category;
 }

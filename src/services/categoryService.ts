@@ -43,7 +43,9 @@ class CategoryService {
         return false;
     }
 
-    public getAllCategories(page: number = 1, limit: number = 10, searchQuery?: string, currentUserId?: string): { rows: Category[], pagination: PaginationSummary } {
+    public getAllCategories(request: categoryDto.GetAllCategoriesRequest, currentUserId?: string): categoryDto.GetAllCategoriesResponseData {
+        const { page = 1, limit = 10, searchQuery } = request;
+
         let filteredCategories = this.categories;
 
         if (currentUserId) {

@@ -188,8 +188,16 @@ export const getAllTasks = (req: Request, res: Response): void => {
 
         const currentUserId = currentUser?.id as string;
 
-        const { rows, pagination }: tasksDto.GetAllTasksResponseData = taskService.getAllTasks(+page, +limit, searchQuery as string, assignedTo as string, category as string, currentUserId);
-
+        const getAllTasksRequest: tasksDto.GetAllTasksRequest = {
+            page: +page,
+            limit: +limit,
+            searchQuery: searchQuery as string,
+            assignedTo: assignedTo as string,
+            category: category as string,
+        };
+        
+        const { rows, pagination }: tasksDto.GetAllTasksResponseData = taskService.getAllTasks(getAllTasksRequest, currentUserId);
+        
         const response: CommonResponseData<tasksDto.GetAllTasksResponseData> = {
             status: true,
             message: 'Tasks fetched successfully',

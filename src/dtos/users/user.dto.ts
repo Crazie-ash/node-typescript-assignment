@@ -34,6 +34,6 @@ export interface GetAllUsersRequest {
 }
 
 export interface GetAllUsersResponseData  {
-    rows: Omit<User, 'password'>[];
+    rows: User[];
     pagination: PaginationSummary;
 }

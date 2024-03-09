@@ -41,11 +41,13 @@ export const createUser = (req: Request, res: Response): void => {
 
         const createdUser = userService.createUser(newUser);
         const token = generateToken(createdUser);
+        const { password: _, ...userDataWithoutPassword } = createdUser;
+
         const commonResponse: CommonResponseData<CreateUserResponseData> = {
             status: true,
             message: 'User created successfully',
             data: {
-                ...createdUser, token
+                ...userDataWithoutPassword, token
             }
         };
         res.status(201).json(commonResponse);
@@ -86,12 +88,13 @@ export const loginUser = (req: Request, res: Response): void => {
             return;
         }
         const token = generateToken(user);
+        const { password: _, ...userDataWithoutPassword } = user;
 
         const commonResponse: CommonResponseData<LoginResponseData> = {
             status: true,
             message: 'Login successful',
             data: {
-                ...user,
+                ...userDataWithoutPassword,
                 token: token
             }
         };

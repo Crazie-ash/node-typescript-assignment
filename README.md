@@ -16,7 +16,8 @@ To set up the project, follow these steps:
 
 ## API Documentation
 
-The API is documented using Postman. You can find the Postman collection [here](link-to-postman-collection).
+The API is documented using Postman. You can find the Postman collection [here](https://api.postman.com/collections/10235256-2a6c4d3c-948b-4c53-89cd-75f07cc270bd?access_key=PMAT-01HRJ078BC8GQXSA61KAT3CB7P).
+Also saved responses are saved accordingly
 
 ## Endpoints
 
@@ -103,11 +104,9 @@ Certain routes, such as creating, updating, and deleting categories, tasks, and 
 
 2. **Validation**: Although sample validation logic has been implemented, it hasn't been integrated into the provided routes. It can be integrated upon request or as per project requirements to ensure data integrity and security.
 
-3. **Population**: In the provided models and routes, there's no explicit handling of population of related entities such as users, tasks, and categories. Depending on the project requirements and complexity, population logic can be implemented to fetch related data and populate it within responses for better data representation.
+3. **Response Messages**: Currently, response messages are embedded within the route handlers. To improve code maintainability and reusability, these messages can be moved to a separate YAML file or constants file. This allows for easier management of response messages and facilitates localization if needed in the future.
 
-4. **Response Messages**: Currently, response messages are embedded within the route handlers. To improve code maintainability and reusability, these messages can be moved to a separate YAML file or constants file. This allows for easier management of response messages and facilitates localization if needed in the future.
-
-5 **Async/await**: There are no asynchronous operations such as I/O operations, network requests, or database queries that would require the use of async and await. Therefore, not implemented
+4 **Async/await**: There are no asynchronous operations such as I/O operations, network requests, or database queries that would require the use of async and await. Therefore, not implemented
 
 ## Testing
 

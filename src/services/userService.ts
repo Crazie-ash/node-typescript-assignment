@@ -2,6 +2,7 @@ import { User } from "../models/user";
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 import { PaginationSummary } from '../dtos/common/pagination';
+import { GetAllUsersRequest } from "../dtos/users/user.dto";
 
 class UserService {
     private users: User[] = [];
@@ -30,7 +31,7 @@ class UserService {
 
     public getUserByUsername(username: string): User | undefined {
         const lowerCaseUsername = username.toLowerCase();
-        return this.users.find(user => user.username.toLowerCase() === lowerCaseUsername);
+        return this.users.find(user => user.username.toLowerCase().includes(lowerCaseUsername));
     }
 
     public getUserById(id: string): User | undefined {
@@ -55,7 +56,9 @@ class UserService {
         return false;
     }
 
-    public getAllUsers(page: number = 1, limit: number = 10, searchQuery: string = ''): { rows: User[], pagination: PaginationSummary } {
+    public getAllUsers(request?: GetAllUsersRequest): { rows: User[], pagination: PaginationSummary } {
+        let { page = 1, limit = 10, searchQuery = '' } = request || {};
+
         let filteredUsers = this.users;
 
         if (searchQuery.trim() !== '') {

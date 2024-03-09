@@ -119,7 +119,14 @@ export const getAllUsers = (req: Request, res: Response): void => {
         const currentUser = req.user;
         const { page = 1, limit = 10, searchQuery } = req.query;
 
-        const { rows, pagination }: userDto.GetAllUsersResponseData = userService.getAllUsers(+page, +limit, searchQuery as string);
+        const getAllUsersRequest: userDto.GetAllUsersRequest = {
+            page: +page,
+            limit: +limit,
+            searchQuery: searchQuery as string,
+        };
+        
+        const { rows, pagination }: userDto.GetAllUsersResponseData = userService.getAllUsers(getAllUsersRequest);
+        
         const response: CommonResponseData<userDto.GetAllUsersResponseData> = {
             status: true,
             message: 'Users fetched successfully',
