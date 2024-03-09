@@ -16,7 +16,7 @@ To set up the project, follow these steps:
 
 ## API Documentation
 
-The API is documented using Postman. You can find the Postman collection [here](https://api.postman.com/collections/10235256-2a6c4d3c-948b-4c53-89cd-75f07cc270bd?access_key=PMAT-01HRJ078BC8GQXSA61KAT3CB7P).
+The API is documented using Postman. You can find the Postman collection [here](https://www.postman.com/interstellar-rocket-983045/workspace/private/collection/10235256-2a6c4d3c-948b-4c53-89cd-75f07cc270bd?action=share&creator=10235256).
 Also saved responses are saved accordingly
 
 ## Endpoints
