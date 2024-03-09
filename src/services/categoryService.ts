@@ -1,24 +1,21 @@
 import { Category } from "../models/category";
 import { v4 as uuidv4 } from 'uuid';
+import { PaginationSummary } from '../dtos/common/pagination';
+import * as categoryDto from "../dtos/categories/category.dto";
 
-interface PaginationSummary {
-    totalRows: number;
-    totalPages: number;
-    currentPage: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-}
 class CategoryService {
     private categories: Category[] = [];
 
-    public createCategory(category: Category): Category {
-        const { title, createdBy } = category;
+    public createCategory(category: categoryDto.CreateCategoryRequest, createdBy: string): Category {
+        const { title } = category;
 
-        const newCategory: Category = {
+        const newCategory: categoryDto.CreateCategoryResponseData = {
             id: uuidv4(),
-            title, 
+            title: title.trim(),
             createdBy,
             createdAt: new Date(),
+            isActive: true,
+            isDeleted: false,
         };
         this.categories.push(newCategory);
         return newCategory;
@@ -28,7 +25,7 @@ class CategoryService {
         return this.categories.find(category => category.id === id);
     }
 
-    public updateCategory(id: string, updatedCategory: Category): Category | undefined {
+    public updateCategory(id: string, updatedCategory: categoryDto.UpdateCategoryRequest): Category | undefined {
         const index = this.categories.findIndex(category => category.id === id);
         if (index !== -1) {
             this.categories[index] = { ...this.categories[index], ...updatedCategory };

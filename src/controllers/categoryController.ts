@@ -1,15 +1,38 @@
 import { Request, Response } from 'express';
 import { Category } from '../models/category';
 import { categoryService } from '../services/categoryService';
+import { CommonResponseData } from '../dtos/common/commonResponseData';
+import * as categoryDto from '../dtos/categories/category.dto';
+
 
 export const createCategory = (req: Request, res: Response): void => {
     try {
         const currentUser = req.user;
-        const { title } = req.body;
-        const newCategory = categoryService.createCategory({ title, createdBy: currentUser?.id ?? 'unknown' });
-        res.status(201).json({ status: true, message: 'Category created successfully', data: newCategory });
+        const reqBody: categoryDto.CreateCategoryRequest = req.body;
+        const newCategory = categoryService.createCategory(reqBody, currentUser?.id ?? 'unknown');
+        if (!newCategory) {
+            const commonResponse: CommonResponseData<{}> = {
+                status: false,
+                message: 'Something went wrong',
+                data: {}
+            };
+            res.status(500).json(commonResponse);
+            return;
+        }
+        const commonResponse: CommonResponseData<categoryDto.CreateCategoryResponseData> = {
+            status: true,
+            message: 'Category created successfully',
+            data: newCategory
+        };
+
+        res.status(201).json(commonResponse);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const commonResponse: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {}
+        };
+        res.status(500).json(commonResponse);
     }
 };
 
@@ -17,24 +40,54 @@ export const updateCategory = (req: Request, res: Response): void => {
     try {
         const currentUser = req.user;
         const categoryId: string = req.params.id;
-        const updatedCategoryData: Category = req.body;
+        const updatedCategoryData: categoryDto.UpdateCategoryRequest = req.body;
         const existingCategory = categoryService.getCategoryById(categoryId);
 
         if (!existingCategory) {
-            res.status(404).json({ status: false, message: 'Category not found', data: {} });
+            const commonResponse: CommonResponseData<{}> = {
+                status: false,
+                message: 'Category not found',
+                data: {}
+            };
+            res.status(404).json(commonResponse);
             return;
         }
 
         if (existingCategory.createdBy !== currentUser?.id) {
-            res.status(403).json({ status: false, message: 'Forbidden: You are not authorized to update this category', data: {} });
+            const commonResponse: CommonResponseData<{}> = {
+                status: false,
+                message: 'Forbidden: You are not authorized to update this category',
+                data: {}
+            };
+            res.status(403).json(commonResponse);
             return;
         }
 
-        const updatedCategory = categoryService.updateCategory(categoryId, updatedCategoryData);
+        const updatedCategory: Category | undefined = categoryService.updateCategory(categoryId, updatedCategoryData);
+        if (!updatedCategory) {
+            const commonResponse: CommonResponseData<{}> = {
+                status: false,
+                message: 'Something went wrong',
+                data: {}
+            };
+            res.status(500).json(commonResponse);
+            return;
+        }
 
-        res.status(200).json({ status: true, message: 'Category updated successfully', data: updatedCategory });
+        const commonResponse: CommonResponseData<categoryDto.UpdateCategoryResponseData> = {
+            status: true,
+            message: 'Category updated successfully',
+            data: updatedCategory
+        };
+
+        res.status(200).json(commonResponse);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const commonResponse: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {}
+        };
+        res.status(500).json(commonResponse);
     }
 };
 
@@ -46,25 +99,49 @@ export const deleteCategory = (req: Request, res: Response): void => {
         const existingCategory = categoryService.getCategoryById(categoryId);
 
         if (!existingCategory) {
-            res.status(404).json({ status: false, message: 'Category not found', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Category not found',
+                data: {},
+            };
+            res.status(404).json(response);
             return;
         }
 
         if (existingCategory.createdBy !== currentUser?.id) {
-            res.status(403).json({ status: false, message: 'Forbidden: You are not authorized to delete this category', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Forbidden: You are not authorized to delete this category',
+                data: {},
+            };
+            res.status(403).json(response);
             return;
         }
 
         const isDeleted = categoryService.deleteCategory(categoryId);
 
         if (!isDeleted) {
-            res.status(500).json({ status: false, message: 'Failed to delete category', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Failed to delete category',
+                data: {},
+            };
+            res.status(500).json(response);
             return;
         }
-
-        res.status(200).json({ status: true, message: 'Category deleted successfully', data: {} });
+        const commonResponse: CommonResponseData<categoryDto.DeleteCategoryResponseData> = {
+            status: true,
+            message: 'Category deleted successfully',
+            data: { id: categoryId }
+        };
+        res.status(200).json(commonResponse);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {},
+        };
+        res.status(500).json(response);
     }
 };
 
@@ -76,18 +153,38 @@ export const getCategoryById = (req: Request, res: Response): void => {
         const existingCategory = categoryService.getCategoryById(categoryId);
 
         if (!existingCategory) {
-            res.status(404).json({ status: false, message: 'Category not found', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Category not found',
+                data: {},
+            };
+            res.status(404).json(response);
             return;
         }
 
         if (existingCategory.createdBy !== currentUser?.id) {
-            res.status(403).json({ status: false, message: 'Forbidden: You are not authorized to view this category', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Forbidden: You are not authorized to view this category',
+                data: {},
+            };
+            res.status(403).json(response);
             return;
         }
 
-        res.status(200).json({ status: true, message: 'Category fetched successfully', data: existingCategory });
+        const response: CommonResponseData<categoryDto.GetCategoryByIdResponse> = {
+            status: true,
+            message: 'Category fetched successfully',
+            data: existingCategory,
+        };
+        res.status(200).json(response);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {},
+        };
+        res.status(500).json(response);
     }
 };
 
@@ -95,12 +192,23 @@ export const getCategoryById = (req: Request, res: Response): void => {
 export const getAllCategories = (req: Request, res: Response): void => {
     try {
         const currentUser = req.user;
-        const { page = 1, limit = 10, searchQuery } = req.query;
+        const { page = 1, limit = 10, searchQuery }: categoryDto.GetAllCategoriesRequest = req.query;
 
-        const categories = categoryService.getAllCategories(+page, +limit, searchQuery as string, currentUser?.id);
+        const { rows, pagination }: categoryDto.GetAllCategoriesResponseData = categoryService.getAllCategories(+page, +limit, searchQuery, currentUser?.id);
 
-        res.status(200).json({ status: true, message: 'Categories fetched successfully', data: categories });
+        const commonResponse: CommonResponseData<categoryDto.GetAllCategoriesResponseData> = {
+            status: true,
+            message: 'Categories fetched successfully',
+            data: { rows, pagination }
+        };
+
+        res.status(200).json(commonResponse);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {}
+        };
+        res.status(500).json(response);
     }
 };

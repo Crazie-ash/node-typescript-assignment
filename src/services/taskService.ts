@@ -4,40 +4,38 @@ import { TaskStatus } from '../enums/TaskStatus';
 import { categoryService } from '../services/categoryService';
 import { User } from "../models/user";
 import { userService } from "./userService";
+import { PaginationSummary } from '../dtos/common/pagination';
+import * as tasksDto from "../dtos/tasks/tasks.dto";
 
-interface PaginationSummary {
-    totalRows: number;
-    totalPages: number;
-    currentPage: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-}
 class TaskService {
     private tasks: Task[] = [];
 
-    public createTask(task: Task): Task {
-        const { title, assignedTo, categoryId, createdBy, description, dueDate } = task;
-        const newTask: Task = {
+    public createTask(task: tasksDto.CreateTaskRequest, createdBy: string): tasksDto.CreateTaskResponseData {
+        const { title, assignedTo, categoryId, description, dueDate } = task;
+        const newTask: tasksDto.CreateTaskResponseData = {
             id: uuidv4(),
-            title,
+            title: title.trim(),
             assignedTo,
             categoryId,
             createdBy,
-            description,
+            description: description.trim(),
             dueDate,
             createdAt: new Date(),
-            status: TaskStatus.Pending
+            status: TaskStatus.Pending,
+            isActive: true,
+            isDeleted: false,
         };
 
         this.tasks.push(newTask);
         return newTask;
     }
 
+
     public getTaskById(id: string): Task | undefined {
         return this.tasks.find(task => task.id === id);
     }
 
-    public updateTask(id: string, updatedTask: Task): Task | undefined {
+    public updateTask(id: string, updatedTask: tasksDto.UpdateTaskRequest): Task | undefined {
         const index = this.tasks.findIndex(task => task.id === id);
         if (index !== -1) {
             this.tasks[index] = { ...this.tasks[index], ...updatedTask };

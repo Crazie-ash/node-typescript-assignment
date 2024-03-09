@@ -1,22 +1,30 @@
 import { Request, Response } from 'express';
 import { Task } from '../models/task';
 import { taskService } from '../services/taskService';
+import { CommonResponseData } from '../dtos/common/commonResponseData';
+import * as tasksDto from '../dtos/tasks/tasks.dto';
 
 export const createTask = (req: Request, res: Response): void => {
     try {
         const currentUser = req.user;
-        const { title, assignedTo, categoryId, description, dueDate } = req.body;
-        const newTask = taskService.createTask({
-            title,
-            assignedTo,
-            categoryId,
-            createdBy: currentUser?.id ?? 'unknown',
-            description,
-            dueDate
-        });
-        res.status(201).json({ status: true, message: 'Task created successfully', data: newTask });
+        const reqBody: tasksDto.CreateTaskRequest = req.body;
+
+        const newTask: tasksDto.CreateTaskResponseData = taskService.createTask(reqBody, currentUser?.id ?? 'unknown');
+
+        const commonResponse: CommonResponseData<tasksDto.CreateTaskResponseData> = {
+            status: true,
+            message: 'Task created successfully',
+            data: newTask
+        };
+
+        res.status(201).json(commonResponse);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {}
+        };
+        res.status(500).json(response);
     }
 };
 
@@ -24,24 +32,55 @@ export const updateTask = (req: Request, res: Response): void => {
     try {
         const currentUser = req.user;
         const taskId: string = req.params.id;
-        const updatedTaskData: Task = req.body;
+        const updatedTaskData: tasksDto.UpdateTaskRequest = req.body;
 
         const existingTask = taskService.getTaskById(taskId);
 
         if (!existingTask) {
-            res.status(404).json({ status: false, message: 'Task not found', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Task not found',
+                data: {},
+            };
+            res.status(404).json(response);
             return;
         }
 
         if (existingTask.createdBy !== currentUser?.id) {
-            res.status(403).json({ status: false, message: 'Forbidden: You are not authorized to update this task', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Forbidden: You are not authorized to update this task',
+                data: {},
+            };
+            res.status(403).json(response);
             return;
         }
 
-        const updatedTask = taskService.updateTask(taskId, updatedTaskData);
-        res.status(200).json({ status: true, message: 'Task updated successfully', data: updatedTask });
+        const updatedTask: Task | undefined = taskService.updateTask(taskId, updatedTaskData);
+        if (!updatedTask) {
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Failed to update task',
+                data: {},
+            };
+            res.status(500).json(response);
+            return;
+        }
+
+        const response: CommonResponseData<tasksDto.UpdateTaskResponseData> = {
+            status: true,
+            message: 'Task updated successfully',
+            data: updatedTask,
+        };
+
+        res.status(200).json(response);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {},
+        };
+        res.status(500).json(response);
     }
 };
 
@@ -53,28 +92,52 @@ export const deleteTask = (req: Request, res: Response): void => {
         const taskToDelete = taskService.getTaskById(taskId);
 
         if (!taskToDelete) {
-            res.status(404).json({ status: false, message: 'Task not found', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Task not found',
+                data: {},
+            };
+            res.status(404).json(response);
             return;
         }
 
         if (taskToDelete.createdBy !== currentUser?.id) {
-            res.status(403).json({ status: false, message: 'Forbidden: You are not authorized to delete this task', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Forbidden: You are not authorized to delete this task',
+                data: {},
+            };
+            res.status(403).json(response);
             return;
         }
 
         const isDeleted = taskService.deleteTask(taskId);
 
         if (!isDeleted) {
-            res.status(500).json({ status: false, message: 'Failed to delete task', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Failed to delete task',
+                data: {},
+            };
+            res.status(500).json(response);
             return;
         }
 
-        res.status(200).json({ status: true, message: 'Task deleted successfully', data: {} });
+        const commonResponse: CommonResponseData<tasksDto.DeleteTaskResponseData> = {
+            status: true,
+            message: 'Task deleted successfully',
+            data: { id: taskId }
+        };
+        res.status(200).json(commonResponse);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {},
+        };
+        res.status(500).json(response);
     }
 };
-
 
 export const getTaskById = (req: Request, res: Response): void => {
     try {
@@ -82,17 +145,39 @@ export const getTaskById = (req: Request, res: Response): void => {
         const taskId: string = req.params.id;
         const task = taskService.getTaskById(taskId);
         if (!task) {
-            res.status(404).json({ status: false, message: 'Task not found', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Task not found',
+                data: {},
+            };
+            res.status(404).json(response);
             return;
         }
 
         if (task.createdBy !== currentUser?.id) {
-            res.status(403).json({ status: false, message: 'Forbidden: You are not authorized to update this task', data: {} });
+            const response: CommonResponseData<{}> = {
+                status: false,
+                message: 'Forbidden: You are not authorized to update this task',
+                data: {},
+            };
+            res.status(403).json(response);
             return;
         }
-        res.status(200).json({ status: true, message: 'Task fetched successfully', data: task });
+
+        const response: CommonResponseData<tasksDto.GetTaskByIdResponseData> = {
+            status: true,
+            message: 'Task fetched successfully',
+            data: task,
+        };
+
+        res.status(200).json(response);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {},
+        };
+        res.status(500).json(response);
     }
 };
 
@@ -103,10 +188,21 @@ export const getAllTasks = (req: Request, res: Response): void => {
 
         const currentUserId = currentUser?.id as string;
 
-        const tasks = taskService.getAllTasks(+page, +limit, searchQuery as string, assignedTo as string, category as string, currentUserId);
+        const { rows, pagination }: tasksDto.GetAllTasksResponseData = taskService.getAllTasks(+page, +limit, searchQuery as string, assignedTo as string, category as string, currentUserId);
 
-        res.status(200).json({ status: true, message: 'Tasks fetched successfully', data: tasks });
+        const response: CommonResponseData<tasksDto.GetAllTasksResponseData> = {
+            status: true,
+            message: 'Tasks fetched successfully',
+            data: { rows, pagination }
+        };
+
+        res.status(200).json(response);
     } catch (error: any) {
-        res.status(500).json({ status: false, message: error.message || 'Something went wrong', data: {} });
+        const response: CommonResponseData<{}> = {
+            status: false,
+            message: error.message || 'Something went wrong',
+            data: {},
+        };
+        res.status(500).json(response);
     }
 };

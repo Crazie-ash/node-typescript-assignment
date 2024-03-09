@@ -1,28 +1,23 @@
 import { User } from "../models/user";
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
-import { UserRole } from "../enums/UserRole";
+import { PaginationSummary } from '../dtos/common/pagination';
 
-interface PaginationSummary {
-    totalRows: number;
-    totalPages: number;
-    currentPage: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-}
 class UserService {
     private users: User[] = [];
 
-    public createUser(user: User): User {
-        const { username, password } = user; 
-        const hashedPassword = bcrypt.hashSync(password, 10); 
+    public createUser(user: Partial<User>): User {
+        const { username, password, role } = user;
+        const hashedPassword = bcrypt.hashSync(password!, 10);
 
         const newUser: User = {
             id: uuidv4(),
-            username,
-            role: UserRole.USER,
+            username: username!,
+            role: role!,
             createdAt: new Date(),
-            password: hashedPassword
+            password: hashedPassword,
+            isActive: true,
+            isDeleted: false,
         };
 
         this.users.push(newUser);
@@ -34,15 +29,15 @@ class UserService {
     }
 
     public getUserByUsername(username: string): User | undefined {
-        const lowerCaseUsername = username.toLowerCase(); 
+        const lowerCaseUsername = username.toLowerCase();
         return this.users.find(user => user.username.toLowerCase() === lowerCaseUsername);
     }
-    
+
     public getUserById(id: string): User | undefined {
         return this.users.find(user => user.id === id);
     }
 
-    public updateUser(id: string, updatedUser: User): User | undefined {
+    public updateUser(id: string, updatedUser: Partial<User>): User | undefined {
         const index = this.users.findIndex(user => user.id === id);
         if (index !== -1) {
             this.users[index] = { ...this.users[index], ...updatedUser };

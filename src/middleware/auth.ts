@@ -31,7 +31,7 @@ export const verifyToken = (roles: UserRole[]) => (req: Request, res: Response, 
         if (!currentUser) {
             return res.status(401).json({ status: false, message: 'Unauthorized', data: {} });
         }
-        if (!roles.includes(currentUser.role)) {
+        if (!roles.includes(currentUser?.role)) {
             return res.status(403).json({ status: false, message: 'Forbidden: Access denied', data: {} });
         }
         req.user = currentUser;

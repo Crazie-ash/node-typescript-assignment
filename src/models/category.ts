@@ -1,6 +1,5 @@
-export interface Category {
-    id?: string;
+import { BaseEntity } from "./base";
+
+export interface Category extends BaseEntity {
     title: string;
-    createdAt?: Date;
-    createdBy: string
 }
